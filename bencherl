@@ -132,7 +132,9 @@ rsbm()
 {number_of_cores, $CORES}.
 EOF
 
-    ${erl} ${argsv} ${EXTRA_ERL_ARGS} -setcookie "${COOKIE}" +S$s:$s \
+    /home/emilio/Doutorado2/sideprojects/versioned/francesquini/otp/visual_tool/erl_prof \
+	$bench \
+	${argsv} ${EXTRA_ERL_ARGS} -setcookie "${COOKIE}" +S$s:$s \
 	$mn -noshell -pa ${EXTRA_CODE_PATH} \
 	suite/ebin bench/$bench/ebin -s run_bench main -s erlang \
 	halt
