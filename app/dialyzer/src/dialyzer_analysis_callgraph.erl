@@ -78,7 +78,7 @@ start(Parent, LegalWarnings, Analysis) ->
 run_analysis(Analysis) ->
   Self = self(),
   Fun = fun() -> analysis_start(Self, Analysis) end,
-  Analysis#analysis{analysis_pid = spawn_link(Fun)}.
+  Analysis#analysis{analysis_pid = spawn_opt(Fun, [link, hub_process])}.
 
 loop(#server_state{parent = Parent, legal_warnings = LegalWarnings} = State,
      #analysis{analysis_pid = AnalPid} = Analysis, ExtCalls) ->

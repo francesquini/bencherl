@@ -47,7 +47,7 @@ no_wheel(N) ->
 
 test(N, Fun) ->
 	Me = self(),
-	Pids = [spawn_link(fun() -> handler(N - 1, Fun, Me) end) || _ <- lists:seq(1, N)],
+	Pids = [spawn_opt(fun() -> handler(N - 1, Fun, Me) end, [link, scheduling:hub_process_spawn_flag()]) || _ <- lists:seq(1, N)],
 	[Pid ! {init, Pids -- [Pid]} || Pid <- Pids],
 	[Pid ! start || Pid <- Pids],
 	[receive {Pid, done} -> ok end || Pid <- Pids],

@@ -38,10 +38,16 @@ bench_args(Version, Conf) ->
 	[[S,M] || S <- [F * Cores], M <- [F * Cores]].
 
 run([S,M|_], _, _) ->
+	
+	Data = [bang, scheduling:hubs_only(), erlang:system_info(scheduler_bindings), sched_ip_strategies:get_current_strategy(), scheduling:deferred_memory_allocation(), scheduling:memory_allocation_policy()],
+	file:write_file("/tmp/foo" ++ utils:to_string(now()), io_lib:fwrite("~p.\n", [Data])),
+	
+	scheduling:check_scheduler_bindings(true),
+	
 	Parent = self(),
 	Done   = make_ref(),
 	Bang   = {make_ref(),make_ref(),make_ref(),make_ref(),make_ref()},
-	Rec    = spawn_opt(fun () -> rec(Bang, S*M), Parent ! Done end, [link]),
+	Rec    = spawn_opt(fun () -> rec(Bang, S*M), Parent ! Done end, [link, hub_process]),
 	lists:foreach(fun(_) ->
 		spawn_link(fun () -> send(Rec, Bang, M) end)
 	end, lists:seq(1, S)),

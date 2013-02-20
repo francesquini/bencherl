@@ -44,22 +44,24 @@ run([N,W,R|_], _, _) ->
 	io:format("xxx"),
 	w(T, N, init),
 	Ws = lists:map(fun (_) ->
-			spawn_link(fun () ->
+			spawn_opt(fun () ->
 				receive go -> ok end,
 				w(T, N, self()),
 				w(T, N, self()),
 				Parent ! {done, self()},
 				receive after infinity -> ok end
-			end)
+			end,
+			[link, scheduling:hub_process_spawn_flag()])
 		end,lists:seq(1, W)),
 	Rs = lists:map(fun (_) ->
-			spawn_link(fun () ->
+			spawn_opt(fun () ->
 				receive go -> ok end,
 				r(T, N),
 				r(T, N),
 				Parent ! {done, self()},
 				receive after infinity -> ok end
-			end)
+			end,
+			[link, scheduling:hub_process_spawn_flag()])
 		end, lists:seq(1, R)),
 	lists:foreach(fun (P) -> P ! go end, Ws),
 	lists:foreach(fun (P) -> P ! go end, Rs),

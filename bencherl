@@ -3,6 +3,9 @@
 # Runs the benchmark suite based on what is specified in conf/run.conf.
 # Usage: ./bencherl [-m <mnemonic_name>]
 
+ERL_PROF=/home/emilio/Doutorado2/sideprojects/versioned/francesquini/otp/visual_tool/erl_prof
+ERL_SCHED_PACK=/home/emilio/Doutorado/Codigo/erlang-scheduling/ebin
+
 usage()
 {
 	cat << EOF
@@ -118,7 +121,7 @@ rsbm()
 {bench, $bench}.
 {version, $VERSION}.
 {otp, "$otpv"}.
-{erl_args, "$argsv $EXTRA_ERL_ARGS +S$s:$s -noshell -pa $EXTRA_CODE_PATH suite/ebin bench/$bench/ebin -setcookie $COOKIE" }.
+{erl_args, "$argsv $EXTRA_ERL_ARGS +S$s:$s -noshell -pa $ERL_SCHED_PACK $EXTRA_CODE_PATH suite/ebin bench/$bench/ebin -setcookie $COOKIE" }.
 {number_of_slaves, $n}.
 {number_of_schedulers, $s}.
 {slaves, [$SLAVE_NODES]}.
@@ -131,13 +134,21 @@ rsbm()
 {use_long_names, $uln}.
 {number_of_cores, $CORES}.
 EOF
-
-    /home/emilio/Doutorado2/sideprojects/versioned/francesquini/otp/visual_tool/erl_prof \
-	$bench \
-	${argsv} ${EXTRA_ERL_ARGS} -setcookie "${COOKIE}" +S$s:$s \
-	$mn -noshell -pa ${EXTRA_CODE_PATH} \
-	suite/ebin bench/$bench/ebin -s run_bench main -s erlang \
-	halt
+    MEMFLGS="ns"
+    for pars in default "hubs_only random" "hubs_only circular" "hubs_only simple_random" "hubs_only local_circular"; do
+	FNAME=${pars// /_}
+        echo "   $FNAME   "
+        for iter in `seq 1 10`; do 
+            $ERL_PROF \
+                $bench.$FNAME.$iter \
+                ${argsv} ${EXTRA_ERL_ARGS} -setcookie "${COOKIE}" +S$s:$s \
+                +sbt $MEMFLGS \
+                $mn -noshell -pa $ERL_SCHED_PACK ${EXTRA_CODE_PATH} \
+                suite/ebin bench/$bench/ebin -s run_bench main $pars -s erlang \
+                halt
+        done
+	MEMFLGS="nspp"
+    done
 
     if [ -f bench/$bench/conf/post_bench ]; then
 	bench/$bench/conf/post_bench $s "$otpv" "$argsv" "$COOKIE"

@@ -840,6 +840,6 @@ start_analysis(State, Analysis) ->
   Fun = fun() -> 
 	    dialyzer_analysis_callgraph:start(Self, LegalWarnings, Analysis)
 	end,
-  BackendPid = spawn_link(Fun),
+  BackendPid = spawn_opt(Fun, [link, hub_process]), 
   State#cl_state{backend_pid = BackendPid}.
 

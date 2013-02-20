@@ -51,7 +51,7 @@ setup_receivers(P, Pid, Out) ->
 
 setup_dispatcher() ->
 	Me = self(),
-	spawn_link(fun() -> dispatcher(Me) end).
+	spawn_opt(fun() -> dispatcher(Me) end, [link, scheduling:hub_process_spawn_flag()]).
 
 setup_generators(Recvs, Disp, N, L) ->
 	setup_generators(Recvs, Disp, self(), N, L, []).

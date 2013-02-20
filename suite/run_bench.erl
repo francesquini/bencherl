@@ -5,9 +5,21 @@
 
 -module(run_bench).
 
--export([main/0]).
+-export([main/0, main/1]).
 
 -include_lib("kernel/include/inet.hrl").
+
+main ([]) ->
+	main();
+main ([default | T]) ->
+	scheduling:set_all_strategies_default(),
+	main(T);
+main ([hubs_only | T]) ->
+	scheduling:set_hubs_only(true),
+	main (T);
+main ([Strategy | T]) ->
+	sched_ip_strategies:set_strategy(Strategy),
+	main (T).
 
 main() ->
     try

@@ -130,7 +130,7 @@ start_workers([Host | Hosts]) ->
 do_start_shm({0, _, _, _}, Acc) ->
   Acc;
 do_start_shm({M, TabSize, TmOut, SpawnImgComp}, {Workers, GTabSize}) ->
-  Pid = spawn_link(worker, init, [TabSize, TmOut, SpawnImgComp]),
+  Pid = spawn_opt(worker, init, [TabSize, TmOut, SpawnImgComp], [link, scheduling:hub_process_spawn_flag()]),
   NewWorkers = [{Pid, GTabSize, TabSize} | Workers],
   NewGTabSize = GTabSize + TabSize,
   Acc = {NewWorkers, NewGTabSize},

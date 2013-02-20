@@ -50,7 +50,7 @@ run([N,M|_], _, _) ->
 	ok.
 
 group(Master, Loop) ->
-	spawn_link(fun () ->
+	spawn_opt(fun () ->
 		GMaster = self(),
 		Rs = lists:map(fun (_) ->
 				spawn_link(fun () -> receiver(GMaster, ?GSIZE) end)
@@ -65,7 +65,8 @@ group(Master, Loop) ->
 		lists:foreach(fun (S) -> S ! {GMaster, go} end, Ss),
 		lists:foreach(fun (R) -> receive {R, done} -> ok end end, Rs),
 		Master ! {self(), done}
-	end).
+	end,
+	[link, scheduling:hub_process_spawn_flag()]).
 
 sender(Rs, 0) ->
 	lists:foreach(fun (R) -> R ! done end, Rs);
