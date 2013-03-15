@@ -39,10 +39,10 @@ bench_args(Version, Conf) ->
 
 run([S,M|_], _, _) ->
 	
-	Data = [bang, scheduling:hubs_only(), erlang:system_info(scheduler_bindings), sched_ip_strategies:get_current_strategy(), scheduling:deferred_memory_allocation(), scheduling:memory_allocation_policy()],
-	file:write_file("/tmp/foo" ++ utils:to_string(now()), io_lib:fwrite("~p.\n", [Data])),
+	% Data = [bang, scheduling:hubs_only(), erlang:system_info(scheduler_bindings), sched_ip_strategies:get_current_strategy(), scheduling:deferred_memory_allocation(), scheduling:memory_allocation_policy()],
+	% file:write_file("/tmp/foo" ++ utils:to_string(now()), io_lib:fwrite("~p.\n", [Data])),
 	
-	scheduling:check_scheduler_bindings(true),
+	scheduling:check_scheduler_bindings(false),
 	
 	Parent = self(),
 	Done   = make_ref(),

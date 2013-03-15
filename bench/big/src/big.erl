@@ -37,10 +37,10 @@ bench_args(Version, Conf) ->
 	[[N] || N <- [F * Cores]].
 
 run([N|_], _, _) ->
-	scheduling:check_scheduler_bindings(true),
+	scheduling:check_scheduler_bindings(false),
 	
-	Data = [big, scheduling:hubs_only(), erlang:system_info(scheduler_bindings), sched_ip_strategies:get_current_strategy(), scheduling:deferred_memory_allocation(), scheduling:memory_allocation_policy()],
-	file:write_file("/tmp/foo" ++ utils:to_string(now()), io_lib:fwrite("~p.\n", [Data])),
+	% Data = [big, scheduling:hubs_only(), erlang:system_info(scheduler_bindings), sched_ip_strategies:get_current_strategy(), scheduling:deferred_memory_allocation(), scheduling:memory_allocation_policy()],
+	% file:write_file("/tmp/foo" ++ utils:to_string(now()), io_lib:fwrite("~p.\n", [Data])),
 	
 	Procs = spawn_procs(N),
 	RMsgs = lists:map(fun (P) -> {done, P} end, Procs),
