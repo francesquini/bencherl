@@ -28,7 +28,7 @@ main ([ws_hier | T]) ->
     main (T);
 main ([lb_disabled | T]) ->
     sched_migration_strategies:set_disabled(),
-    main (T);
+    main (T).
 
 main() ->
     try
