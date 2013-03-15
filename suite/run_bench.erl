@@ -17,9 +17,18 @@ main ([default | T]) ->
 main ([hubs_only | T]) ->
 	scheduling:set_hubs_only(true),
 	main (T);
-main ([Strategy | T]) ->
-	sched_ip_strategies:set_strategy(Strategy),
-	main (T).
+main ([compact | T]) ->
+	sched_ip_strategies:set_strategy(compact),
+	main (T);
+main ([scatter | T]) ->
+    sched_ip_strategies:set_strategy(scatter),
+    main (T);
+main ([ws_hier | T]) ->
+    sched_ws_strategies:set_strategy(numa),
+    main (T);
+main ([lb_disabled | T]) ->
+    sched_migration_strategies:set_disabled(),
+    main (T);
 
 main() ->
     try
